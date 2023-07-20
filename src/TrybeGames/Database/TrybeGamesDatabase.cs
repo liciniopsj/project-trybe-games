@@ -1,5 +1,8 @@
+using System.Runtime.Intrinsics.X86;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Data.Common;
 
 namespace TrybeGames;
 
@@ -14,27 +17,29 @@ public class TrybeGamesDatabase
     // 4. Crie a funcionalidade de buscar jogos desenvolvidos por um estúdio de jogos
     public List<Game> GetGamesDevelopedBy(GameStudio gameStudio)
     {
-        List<Game> filteredGames =
-                                (from games in Games
+        var filteredGames = from games in Games
                                  where games.DeveloperStudio == gameStudio.Id
-                                 select games).ToList();
-        return filteredGames;
+                                 select games;
+        return filteredGames.ToList();
     }
 
     // 5. Crie a funcionalidade de buscar jogos jogados por uma pessoa jogadora
     public List<Game> GetGamesPlayedBy(Player player)
     {
-        List<Game> filteredGames = (from games in Games
-                                where games.Players.Contains(player.Id)
-                                select games).ToList();
-        return filteredGames;
+        var filteredGames = from games in Games
+                            where games.Players.Contains(player.Id)
+                            select games;
+        return filteredGames.ToList();
     }
 
     // 6. Crie a funcionalidade de buscar jogos comprados por uma pessoa jogadora
     public List<Game> GetGamesOwnedBy(Player playerEntry)
     {
-        // Implementar
-        throw new NotImplementedException();
+        var ownedGames = from game in Games
+                         join gameId in playerEntry.GamesOwned on game.Id equals gameId
+                         select game;
+
+        return ownedGames.ToList();
     }
 
 
