@@ -47,7 +47,8 @@ public class TrybeGamesController
             Console.WriteLine("Opção inválida! Tente novamente.");
             return;
         }
-        try {
+        try
+        {
             var games = database.GetGamesDevelopedBy(gameStudio);
             Console.WriteLine("Jogos do estúdio de jogos " + gameStudio.Name + ":");
             foreach (var game in games)
@@ -71,7 +72,8 @@ public class TrybeGamesController
             Console.WriteLine("Pessoa jogadora não encontrada!");
             return;
         }
-        try {
+        try
+        {
             var games = database.GetGamesPlayedBy(player);
             if (games.Count() == 0)
             {
@@ -101,7 +103,8 @@ public class TrybeGamesController
             Console.WriteLine("Pessoa jogadora não encontrada!");
             return;
         }
-        try {
+        try
+        {
             var games = database.GetGamesOwnedBy(player);
             Console.WriteLine("Jogos comprados pela pessoa jogadora " + player.Name + ":");
             foreach (var game in games)
@@ -157,8 +160,36 @@ public class TrybeGamesController
     // 3. Crie a funcionalidade de adicionar novo Jogo ao Banco de dados
     public void AddGame()
     {
-        // implementar
-        Console.WriteLine("Ainda não é possível realizar essa funcionalidade!");
+        int listLenght = database.Games.Count;
+        listLenght++;
+        Console.WriteLine("Adicionar novo Game");
+        Console.WriteLine("Digite o nome do Jogo:");
+        string gameName = Console.ReadLine();
+        Console.WriteLine("Digite a data de lançamento do jogo:");
+        string realeaseDate = Console.ReadLine();
+
+        Console.WriteLine("Selecione a categoria:");
+        Console.WriteLine("1 - Action");
+        Console.WriteLine("2 - Adventure");
+        Console.WriteLine("3 - Puzzle");
+        Console.WriteLine("4 - Strategy");
+        Console.WriteLine("5 - Simulation");
+        Console.WriteLine("6 - Sports");
+        Console.WriteLine("7 - Other");
+        GameType gameType = (GameType)int.Parse(Console.ReadLine());
+
+        Game game = new()
+        {
+            Id = listLenght,
+            Name = gameName,
+            ReleaseDate = DateTime.ParseExact(realeaseDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+            GameType = gameType,
+            DeveloperStudio = 0,
+            Players = new List<int>(),
+
+        };
+        database.Games.Add(game);
+        Console.WriteLine("Game adicionado");
     }
 
     public void ChangeGameStudio(Game game)
