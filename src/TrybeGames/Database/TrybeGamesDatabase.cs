@@ -18,8 +18,8 @@ public class TrybeGamesDatabase
     public List<Game> GetGamesDevelopedBy(GameStudio gameStudio)
     {
         var filteredGames = from games in Games
-                                 where games.DeveloperStudio == gameStudio.Id
-                                 select games;
+                            where games.DeveloperStudio == gameStudio.Id
+                            select games;
         return filteredGames.ToList();
     }
 
@@ -67,9 +67,39 @@ public class TrybeGamesDatabase
 
     // 9. Crie a funcionalidade de buscar todos os estúdios de jogos junto dos seus jogos desenvolvidos com suas pessoas jogadoras
     public List<StudioGamesPlayers> GetStudiosWithGamesAndPlayers()
-    {
-        // Implementar
-        throw new NotImplementedException();
-    }
+        {
+            List<StudioGamesPlayers> result = new();
 
-}
+            var gamesByStudio = from game in Games
+                                join studio in GameStudios on game.DeveloperStudio equals studio.Id
+                                select new { Studio = studio, Game = game };
+
+            foreach (var group in gamesByStudio.GroupBy(g => g.Studio))
+            {
+                StudioGamesPlayers gamePlayerList = new()
+                {
+                    GameStudioName = group.Key.Name,
+                    Games = new List<GamePlayer>()
+                };
+
+                foreach (var game in group)
+                {
+                    List<Player> playersInGame = Players
+                        .Where(player => game.Game.Players.Contains(player.Id))
+                        .ToList();
+
+                    GamePlayer gamePlayer = new()
+                    {
+                        GameName = game.Game.Name,
+                        Players = playersInGame
+                    };
+
+                    gamePlayerList.Games.Add(gamePlayer);
+                }
+
+                result.Add(gamePlayerList);
+            }
+
+            return result;
+        }
+    }
